@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <packaging>war</packaging>
+    <parent>
+        <artifactId>petadopt</artifactId>
+        <groupId>com.ck</groupId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>petadopt-web</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.ck</groupId>
+            <artifactId>petadopt-web-logic</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.ck</groupId>
+            <artifactId>petadopt-web-common</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
+    <build>
+        <finalName>${artifactId}</finalName>
+    </build>
+    <properties>
+        <!-- The main class to start by executing java -jar -->
+        <start-class>com.ck.petadopt.PetAdoptApplication</start-class>
+    </properties>
+</project>
