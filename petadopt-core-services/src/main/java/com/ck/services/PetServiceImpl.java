@@ -10,6 +10,7 @@ import com.ck.dto.PetTypeDTO;
 import com.ck.dto.UserDTO;
 import com.ck.entitydao.PetDAO;
 import com.ck.entitydao.PetTypeDAO;
+import com.ck.exceptionhandler.NotFoundObjectException;
 import com.ck.utils.PetAboutUtils;
 import com.ck.utils.PetTypeUtils;
 import com.ck.utils.PetUtils;
@@ -68,6 +69,9 @@ public class PetServiceImpl implements PetService {
     @Override
     public PetDTO findSinglePetHome(Integer id) {
         PetEntity petEntity = petDAO.findSinglePetHome(id);
+        if(petEntity == null){
+            throw new NotFoundObjectException();
+        }
         PetDTO petDTO = PetUtils.entity2DTO(petEntity);
         PetAboutEntity petAboutEntity = petEntity.getPetAboutEntity();
         PetTypeEntity petTypeEntity = petEntity.getPetTypeEntity();
@@ -104,6 +108,10 @@ public class PetServiceImpl implements PetService {
     @Override
     public PetDTO findSinglePetAdmin(Integer id) {
         PetEntity petEntity = petDAO.findSinglePetAdmin(id);
+        if(petEntity == null){
+            throw new NotFoundObjectException();
+
+        }
         PetDTO petDTO = PetUtils.entity2DTO(petEntity);
         PetAboutEntity petAboutEntity = petEntity.getPetAboutEntity();
         PetTypeEntity petTypeEntity = petEntity.getPetTypeEntity();

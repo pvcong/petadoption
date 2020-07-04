@@ -25,6 +25,7 @@ public class PetDAOImpl extends GenericDAOImpl<Integer, PetEntity> implements Pe
         try{
             PetEntity petEntityPersist = entityManager.find(PetEntity.class,entity.getPetId());
             entity.setUserEntity(petEntityPersist.getUserEntity());
+            entity.setCreatedDate(petEntityPersist.getCreatedDate());
            // petEntityPersist.setPetTypeEntity(entity.getPetTypeEntity());
 //            petEntityPersist.setPetName(entity.getPetName());
 //            petEntityPersist.setGender(entity.getGender());
@@ -154,7 +155,7 @@ public class PetDAOImpl extends GenericDAOImpl<Integer, PetEntity> implements Pe
         if(!StringUtils.isEmpty(sortProperty) && !StringUtils.isEmpty(sortValue)){
             JpaUtils.buildOrderBy(stringQuery,"p." + sortProperty,sortValue);
         }else{
-            JpaUtils.buildOrderBy(stringQuery,"p.modifiedDate",sortValue);
+            JpaUtils.buildOrderBy(stringQuery,"p.modifiedDate","DESC");
         }
         Query query = entityManager.createQuery(stringQuery.toString());
 

@@ -8,6 +8,7 @@ import com.ck.data.NewsEntity;
 import com.ck.dto.NewsCategoryDTO;
 import com.ck.dto.NewsDTO;
 import com.ck.exceptionhandler.NotFoundObjectException;
+import com.ck.exceptionhandler.RequestValidateException;
 import com.ck.exceptionhandler.UploadFileException;
 import com.ck.services.NewsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -41,20 +43,87 @@ public class NewsController {
     @ResponseStatus( code = HttpStatus.CREATED)
     @RequestMapping( value = "/admin/news", method = RequestMethod.POST)
     public void saveNews(@RequestBody NewsDTO newsDTO){
+        validateSave(newsDTO);
         Timestamp createdDate = new Timestamp(System.currentTimeMillis());
         Timestamp modifiedDate = new Timestamp(System.currentTimeMillis());
         newsDTO.setCreatedDate(createdDate);
         newsDTO.setModifiedDate(modifiedDate);
+
         newsService.save(newsDTO);
+    }
+
+    private void validateSave(NewsDTO newsDTO) {
+        List<String> listError = new ArrayList<>();
+        if(StringUtils.isEmpty(newsDTO.getAvatar())){
+            listError.add("avatar cannot null and empty.");
+        }
+        if(StringUtils.isEmpty(newsDTO.getContent())){
+            listError.add("content cannot null and empty.");
+        }
+        if(StringUtils.isEmpty(newsDTO.getTitle())){
+            listError.add("title cannot null and empty.");
+        }
+        if(newsDTO.getNewsCategoryDTO() == null){
+            listError.add("newsCategoryDTO.newsCategoryId cannot null.");
+        }else{
+            if(newsDTO.getNewsCategoryDTO().getNewsCategoryId() == null){
+                listError.add("newsCategoryDTO.newsCategoryId cannot null.");
+            }
+        }
+        if(newsDTO.getUserDTO() == null){
+            listError.add("userDTO.userId cannot null.");
+        }
+        else{
+            if(newsDTO.getUserDTO().getUserId() == null){
+                listError.add("userDTO.userId cannot null.");
+            }
+        }
+        if(listError.size() > 0){
+            throw  new RequestValidateException("News Validate Error!!",listError);
+        }
     }
 
     @ResponseStatus( code = HttpStatus.CREATED)
     @RequestMapping( value = "/admin/news", method = RequestMethod.PUT)
     public void updateNews(@RequestBody NewsDTO newsDTO){
-
+        validteUpdate(newsDTO);
         Timestamp modifiedDate = new Timestamp(System.currentTimeMillis());
         newsDTO.setModifiedDate(modifiedDate);
         newsService.update(newsDTO);
+    }
+
+    private void validteUpdate(NewsDTO newsDTO) {
+        List<String> listError = new ArrayList<>();
+        if(newsDTO.getNewsId() == null){
+            listError.add("newsId cannot null.");
+        }
+        if(StringUtils.isEmpty(newsDTO.getAvatar())){
+            listError.add("avatar cannot null and empty.");
+        }
+        if(StringUtils.isEmpty(newsDTO.getContent())){
+            listError.add("content cannot null and empty.");
+        }
+        if(StringUtils.isEmpty(newsDTO.getTitle())){
+            listError.add("title cannot null and empty.");
+        }
+        if(newsDTO.getNewsCategoryDTO() == null){
+            listError.add("newsCategoryDTO.newsCategoryId cannot null.");
+        }else{
+            if(newsDTO.getNewsCategoryDTO().getNewsCategoryId() == null){
+                listError.add("newsCategoryDTO.newsCategoryId cannot null.");
+            }
+        }
+        if(newsDTO.getUserDTO() == null){
+            listError.add("userDTO.userId cannot null.");
+        }
+        else{
+            if(newsDTO.getUserDTO().getUserId() == null){
+                listError.add("userDTO.userId cannot null.");
+            }
+        }
+        if(listError.size() > 0){
+            throw  new RequestValidateException("News Validate Error!!",listError);
+        }
     }
 
     @ResponseStatus( code = HttpStatus.NO_CONTENT)
@@ -75,10 +144,7 @@ public class NewsController {
     @ResponseStatus( code = HttpStatus.OK)
     public NewsDTO findNewsByIdAdmin(@PathVariable Integer id){
         NewsDTO newsDTO = newsService.findById(id);
-        if( newsDTO.getNewsId() != null){
-            return newsDTO;
-        }
-        throw new NotFoundObjectException();
+        return newsDTO;
     }
     @ResponseStatus( code = HttpStatus.OK)
     @RequestMapping( value = "/news", method = RequestMethod.GET)

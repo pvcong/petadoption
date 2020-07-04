@@ -7,6 +7,7 @@ import com.ck.dto.NewsCategoryDTO;
 import com.ck.dto.NewsDTO;
 import com.ck.dto.UserDTO;
 import com.ck.entitydao.NewsDAO;
+import com.ck.exceptionhandler.NotFoundObjectException;
 import com.ck.utils.NewsCategoryUtils;
 import com.ck.utils.NewsUtils;
 import com.ck.utils.UserUtils;
@@ -51,10 +52,17 @@ public class NewsServiceImpl implements NewsService{
     @Override
     public NewsDTO findById(Integer id) {
         NewsEntity newsEntity = newsDAO.findById(id);
+        if(newsEntity == null){
+            throw new NotFoundObjectException();
+
+        }
         NewsDTO newsDTO = NewsUtils.entity2DTO(newsEntity);
+        UserEntity userEntity = newsEntity.getUserEntity();
+        UserDTO userDTO = UserUtils.entity2DTO(userEntity);
         NewsCategoryEntity newsCategoryEntity = newsEntity.getNewsCategoryEntity();
         NewsCategoryDTO categoryDTO = NewsCategoryUtils.entity2DTO(newsCategoryEntity);
         newsDTO.setNewsCategoryDTO(categoryDTO);
+        newsDTO.setUserDTO(userDTO);
         return newsDTO;
     }
 
@@ -81,6 +89,9 @@ public class NewsServiceImpl implements NewsService{
             NewsDTO newsDTO1 = NewsUtils.entity2DTO(item);
             UserDTO userDTO = UserUtils.entity2DTO(item.getUserEntity());
             newsDTO1.setUserDTO(userDTO);
+            NewsCategoryEntity newsCategoryEntity1 = item.getNewsCategoryEntity();
+            NewsCategoryDTO newsCategoryDTO1 = NewsCategoryUtils.entity2DTO(newsCategoryEntity1);
+            newsDTO1.setNewsCategoryDTO(newsCategoryDTO1);
             newsDTOS.add(newsDTO1);
         }
         return new Object[]{objects[0],newsDTOS};

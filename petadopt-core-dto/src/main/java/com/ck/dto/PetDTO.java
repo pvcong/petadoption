@@ -1,6 +1,5 @@
 package com.ck.dto;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -11,9 +10,10 @@ public class PetDTO {
 
     private Integer petId;
     private String petName;
-
     private String image;
+
     private String description;
+
     private Integer weight;
 
     private Integer age;
@@ -25,7 +25,6 @@ public class PetDTO {
     private String breed;
 
     private String gender;
-
     private String status;
 
     private Timestamp createdDate;

@@ -5,6 +5,7 @@ import com.ck.data.UserEntity;
 import com.ck.dto.RoleDTO;
 import com.ck.dto.UserDTO;
 import com.ck.entitydao.UserDAO;
+import com.ck.exceptionhandler.NotFoundObjectException;
 import com.ck.utils.RoleUtils;
 import com.ck.utils.UserUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +56,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDTO findById(Integer id) {
         UserEntity userEntity = userDAO.findById(id);
+        if(userEntity == null){
+            throw new NotFoundObjectException();
+
+        }
         UserDTO userDTO = UserUtils.entity2DTO(userEntity);
         RoleEntity roleEntity = userEntity.getRoleEntity();
         RoleDTO roleDTO = RoleUtils.entity2DTO(roleEntity);

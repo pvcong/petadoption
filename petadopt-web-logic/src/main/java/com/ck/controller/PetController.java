@@ -9,6 +9,7 @@ import com.ck.dto.PetAboutDTO;
 import com.ck.dto.PetDTO;
 import com.ck.dto.PetTypeDTO;
 import com.ck.exceptionhandler.NotFoundObjectException;
+import com.ck.exceptionhandler.RequestValidateException;
 import com.ck.exceptionhandler.UploadFileException;
 import com.ck.services.PetService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -33,6 +36,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,21 +47,118 @@ public class PetController {
     PetService petService;
     @ResponseStatus( value = HttpStatus.CREATED)
     @RequestMapping( value = "/admin/pet", method = RequestMethod.POST)
-    public void savePet(@RequestBody PetDTO petDTO){
+    public void savePet(@RequestBody  PetDTO petDTO){
+        validateSavePet(petDTO);
         Timestamp createdDate = new Timestamp(System.currentTimeMillis());
         Timestamp modifiedDate = new Timestamp(System.currentTimeMillis());
         petDTO.setCreatedDate(createdDate);
         petDTO.setModifiedDate(modifiedDate);
         petService.save(petDTO);
     }
+
+    private void validateSavePet(PetDTO petDTO) {
+        List<String> listValidateError = new ArrayList<>();
+        if(StringUtils.isEmpty(petDTO.getImage())){
+            listValidateError.add("image cannot null and empty.");
+        }
+        if(StringUtils.isEmpty(petDTO.getDescription())){
+            listValidateError.add("description cannot null and empty.");
+        }
+        if(StringUtils.isEmpty(petDTO.getPetName())){
+            listValidateError.add("petName cannot null and empty.");
+        }
+        if(StringUtils.isEmpty(petDTO.getStatus())){
+            listValidateError.add("status cannot null and empty.");
+        }else{
+            if(!petDTO.getStatus().equals("show") && !petDTO.getStatus().equals("hide")){
+                listValidateError.add("status just accept 'show' value or 'hide' value");
+            }
+        }
+        if(petDTO.getPetTypeDTO() == null){
+            listValidateError.add("petTypeDTO.petTypeId cannot null.");
+        }
+        else{
+            if(petDTO.getPetTypeDTO().getPetTypeId() == null){
+                listValidateError.add("petTypeDTO.petTypeId cannot null.");
+            }
+        }
+        if(petDTO.getUserDTO() == null){
+            listValidateError.add("userDTO.userId cannot null.");
+        }
+        else{
+            if(petDTO.getUserDTO().getUserId() == null){
+                listValidateError.add("userDTO.userId cannot null.");
+            }
+        }
+        if(petDTO.getPetAboutDTO() == null){
+            listValidateError.add("petAboutDTO cannot null.");
+        }
+        if(listValidateError.size() > 0){
+            throw new RequestValidateException("Pet Validate Error!!",listValidateError);
+        }
+
+    }
+
     @ResponseStatus( value = HttpStatus.CREATED)
     @RequestMapping( value = "/admin/pet", method = RequestMethod.PUT)
     public void updatePet(@RequestBody PetDTO petDTO){
+        validateUpdatePet(petDTO);
         Timestamp modifiedDate = new Timestamp(System.currentTimeMillis());
         petDTO.setModifiedDate(modifiedDate);
 
         petService.update(petDTO);
     }
+
+    private void validateUpdatePet(PetDTO petDTO) {
+        List<String> listValidateError = new ArrayList<>();
+        if(StringUtils.isEmpty(petDTO.getImage())){
+           listValidateError.add("image cannot null and empty.");
+        }
+        if(StringUtils.isEmpty(petDTO.getDescription())){
+            listValidateError.add("description cannot null and empty.");
+        }
+        if(StringUtils.isEmpty(petDTO.getPetName())){
+            listValidateError.add("petName cannot null and empty.");
+        }
+        if(StringUtils.isEmpty(petDTO.getStatus())){
+            listValidateError.add("status cannot null and empty.");
+        }else{
+            if(!petDTO.getStatus().equals("show") && !petDTO.getStatus().equals("hide")){
+                listValidateError.add("status just accept 'show' value or 'hide' value");
+            }
+        }
+        if(StringUtils.isEmpty(petDTO.getPetId())){
+            listValidateError.add("petId cannot null.");
+        }
+        if(petDTO.getPetTypeDTO() == null){
+            listValidateError.add("petTypeDTO.petTypeId cannot null.");
+        }
+        else{
+            if(petDTO.getPetTypeDTO().getPetTypeId() == null){
+                listValidateError.add("petTypeDTO.petTypeId cannot null.");
+            }
+        }
+        if(petDTO.getUserDTO() == null){
+            listValidateError.add("userDTO.userId cannot null.");
+        }
+        else{
+            if(petDTO.getUserDTO().getUserId() == null){
+                listValidateError.add("userDTO.userId cannot null.");
+            }
+            }
+        if(petDTO.getPetAboutDTO() == null){
+            listValidateError.add("petAboutDTO.petId cannot null.");
+        }
+        else{
+            if(petDTO.getPetAboutDTO().getPetId() == null){
+                listValidateError.add("petAboutDTO.petId cannot null.");
+            }
+        }
+        if(listValidateError.size() > 0){
+            throw new RequestValidateException("Pet Validate Error!!",listValidateError);
+        }
+    }
+
     @ResponseStatus( value = HttpStatus.NO_CONTENT)
     @RequestMapping( value = "/admin/pet", method = RequestMethod.DELETE)
     public void deletePet(@RequestBody List<PetDTO> petDTOs){
@@ -68,11 +169,8 @@ public class PetController {
     @RequestMapping( value = "pet/{id}", method = RequestMethod.GET)
     public PetDTO findSinglePet(@PathVariable Integer id){
        PetDTO petDTO =  petService.findSinglePetHome(id);
-       if(petDTO.getPetId() != null)
        return petDTO;
-       else {
-           throw new NotFoundObjectException();
-       }
+
     }
     @ResponseStatus( value = HttpStatus.OK)
     @RequestMapping( value = "pet", method = RequestMethod.GET)
@@ -103,11 +201,7 @@ public class PetController {
     @RequestMapping( value = "admin/pet/{id}", method = RequestMethod.GET)
     public PetDTO findSinglePetAdmin(@PathVariable Integer id){
         PetDTO petDTO =  petService.findSinglePetAdmin(id);
-        if(petDTO .getPetId()!= null)
             return petDTO;
-        else {
-            throw new NotFoundObjectException();
-        }
     }
 
     @ResponseStatus( value = HttpStatus.OK)

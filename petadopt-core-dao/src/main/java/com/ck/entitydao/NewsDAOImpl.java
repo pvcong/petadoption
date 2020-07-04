@@ -21,6 +21,7 @@ public class NewsDAOImpl extends GenericDAOImpl<Integer, NewsEntity> implements 
         try{
             NewsEntity newsEntityPersis = entityManager.find(NewsEntity.class,entity.getNewsId());
             entity.setUserEntity(newsEntityPersis.getUserEntity());
+            entity.setCreatedDate(newsEntityPersis.getCreatedDate());
             entityManager.merge(entity);
         }catch (HibernateException e){
             throw e;
@@ -50,6 +51,7 @@ public class NewsDAOImpl extends GenericDAOImpl<Integer, NewsEntity> implements 
         try{
             entity =  entityManager.find(persistenClass,integer);
             entity.getNewsCategoryEntity();
+            entity.getUserEntity();
         } catch (HibernateException e){
             throw e;
         }

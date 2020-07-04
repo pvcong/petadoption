@@ -26,6 +26,18 @@ public class CustomRestHandlerException extends ResponseEntityExceptionHandler {
         apiError.setHttpStatus(HttpStatus.NOT_FOUND);
         return new ResponseEntity<Object>(apiError,new HttpHeaders(),apiError.getHttpStatus());
     }
+    @ExceptionHandler( RequestValidateException.class)
+    public ResponseEntity<Object> handlerRequestValidate(RequestValidateException e){
+        ApiError apiError = new ApiError();
+        apiError.setMessage(e.getMessage());
+        List<String> errors  = e.getListError();
+
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        apiError.setErrors(errors);
+        apiError.setTimestamp(timestamp);
+        apiError.setHttpStatus(HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<Object>(apiError,new HttpHeaders(),apiError.getHttpStatus());
+    }
     @ExceptionHandler( UploadFileException.class)
     public ResponseEntity<Object> handlerUploadFile(UploadFileException e){
         ApiError apiError = new ApiError();

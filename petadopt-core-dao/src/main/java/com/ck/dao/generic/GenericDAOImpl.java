@@ -3,6 +3,8 @@ package com.ck.dao.generic;
 import org.hibernate.HibernateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
@@ -17,7 +19,8 @@ public abstract class GenericDAOImpl<ID,T> implements GenericDAO<ID,T> {
     protected EntityManager entityManager;
     protected Logger logger = LoggerFactory.getLogger(GenericDAOImpl.class);
     protected Class<T> persistenClass = (Class<T>)((ParameterizedType)getClass().getGenericSuperclass()).getActualTypeArguments()[1];
-
+    @Autowired
+    protected MessageSource messageSource;
     @Override
     public void save(T entity) {
         try{
