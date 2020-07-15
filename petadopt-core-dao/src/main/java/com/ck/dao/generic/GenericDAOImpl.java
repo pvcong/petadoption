@@ -12,6 +12,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.lang.reflect.ParameterizedType;
+import java.util.ArrayList;
 import java.util.List;
 @Transactional
 public abstract class GenericDAOImpl<ID,T> implements GenericDAO<ID,T> {
@@ -92,5 +93,22 @@ public abstract class GenericDAOImpl<ID,T> implements GenericDAO<ID,T> {
             }
         }
         return isExist;
+    }
+
+    @Override
+    public List<T> findAll() {
+        List<T> entities = new ArrayList<>();
+        StringBuilder stringQuery = new StringBuilder("FROM ")
+                .append(persistenClass.getSimpleName());
+        Query query = entityManager.createQuery(stringQuery.toString());
+        try{
+            entities = query.getResultList();
+
+        }catch (HibernateException e){
+            throw e;
+        }finally {
+            entityManager.close();
+        }
+        return entities;
     }
 }

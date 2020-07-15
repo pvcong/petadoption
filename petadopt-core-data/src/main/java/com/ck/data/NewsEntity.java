@@ -16,6 +16,8 @@ public class NewsEntity {
     private String content;
     @Column( name = "avatar")
     private String avatar;
+    @Column( name = "status")
+    private String status;
     @Column(name = "created_date")
     private Timestamp createdDate;
     @Column(name = "modified_date")
@@ -28,6 +30,14 @@ public class NewsEntity {
     private NewsCategoryEntity newsCategoryEntity;
 
     public NewsEntity() {
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public String getAvatar() {

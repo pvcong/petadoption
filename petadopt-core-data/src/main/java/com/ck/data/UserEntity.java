@@ -31,7 +31,8 @@ public class UserEntity {
     private Timestamp createdDate;
     @Column( name = "modifiedDate")
     private Timestamp modifiedDate;
-
+    @OneToMany( mappedBy = "userEntity")
+    private List<ProductEntity> productEntities;
     @ManyToOne( fetch = FetchType.LAZY)
     @JoinColumn( name = "role_id")
     private RoleEntity roleEntity;

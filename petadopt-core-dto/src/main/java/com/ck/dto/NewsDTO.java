@@ -12,7 +12,7 @@ public class NewsDTO {
     private String title;
 
     private String content;
-
+    private String status;
     private Timestamp createdDate;
 
     private Timestamp modifiedDate;
@@ -22,6 +22,14 @@ public class NewsDTO {
     private NewsCategoryDTO newsCategoryDTO;
 
     public NewsDTO() {
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public String getAvatar() {

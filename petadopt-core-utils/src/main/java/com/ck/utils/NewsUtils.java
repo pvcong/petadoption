@@ -12,6 +12,8 @@ public class NewsUtils {
             newsEntity.setNewsId(newsDTO.getNewsId());
             newsEntity.setModifiedDate(newsDTO.getModifiedDate());
             newsEntity.setCreatedDate(newsDTO.getCreatedDate());
+            if(newsDTO.getStatus() != null)
+            newsEntity.setStatus(newsDTO.getStatus().toLowerCase());
             newsEntity.setAvatar(newsDTO.getAvatar());
 
         }
@@ -23,6 +25,8 @@ public class NewsUtils {
             newsDTO.setContent(newsEntity.getContent());
             newsDTO.setTitle(newsEntity.getTitle());
             newsDTO.setAvatar(newsEntity.getAvatar());
+            if(newsEntity.getStatus() != null)
+            newsDTO.setStatus(newsEntity.getStatus());
             newsDTO.setNewsId(newsEntity.getNewsId());
             newsDTO.setModifiedDate(newsEntity.getModifiedDate());
             newsDTO.setCreatedDate(newsEntity.getCreatedDate());

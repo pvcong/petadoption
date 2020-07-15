@@ -14,5 +14,5 @@ public interface GenericDAO<ID,T> {
     public void delete(List<T> entities);
     public T findById(ID id);
     public Boolean checkPropertyValueExist(String propertyName,String propertyValue);
-
+    public List<T> findAll();
 }

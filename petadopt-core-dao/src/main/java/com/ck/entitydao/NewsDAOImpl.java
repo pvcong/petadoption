@@ -98,6 +98,9 @@ public class NewsDAOImpl extends GenericDAOImpl<Integer, NewsEntity> implements 
             if(!StringUtils.isEmpty(newsEntity.getTitle())){
                 stringQuery.append(" AND n.title LIKE '%' || :title || '%'" );
             }
+            if(!StringUtils.isEmpty(newsEntity.getStatus())){
+                stringQuery.append(" AND n.status = :status");
+            }
         }
         if(newsCategoryEntity != null){
             if(newsCategoryEntity.getNewsCategoryId() != null){
@@ -121,6 +124,10 @@ public class NewsDAOImpl extends GenericDAOImpl<Integer, NewsEntity> implements 
             if(!StringUtils.isEmpty(newsEntity.getTitle())){
                 query.setParameter("title",newsEntity.getTitle());
             }
+            if(!StringUtils.isEmpty(newsEntity.getStatus())){
+                query.setParameter("status",newsEntity.getStatus());
+            }
+
         }
         if(newsCategoryEntity != null){
             if(newsCategoryEntity.getNewsCategoryId() != null){
@@ -139,6 +146,9 @@ public class NewsDAOImpl extends GenericDAOImpl<Integer, NewsEntity> implements 
             if(!StringUtils.isEmpty(newsEntity.getTitle())){
                 stringQueryCount.append(" AND n.title LIKE '%' || :title || '%'" );
             }
+            if(!StringUtils.isEmpty(newsEntity.getStatus())){
+                stringQueryCount.append(" AND n.status = :status");
+            }
         }
         if(newsCategoryEntity != null){
             if(newsCategoryEntity.getNewsCategoryId() != null){
@@ -155,6 +165,9 @@ public class NewsDAOImpl extends GenericDAOImpl<Integer, NewsEntity> implements 
             }
             if(!StringUtils.isEmpty(newsEntity.getTitle())){
                 queryCount.setParameter("title",newsEntity.getTitle());
+            }
+            if(!StringUtils.isEmpty(newsEntity.getStatus())){
+                queryCount.setParameter("status",newsEntity.getStatus());
             }
         }
         if(newsCategoryEntity != null){

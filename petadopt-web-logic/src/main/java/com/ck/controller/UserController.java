@@ -67,7 +67,7 @@ public class UserController {
 //        );
 //        SecurityContextHolder.getContext().setAuthentication(authentication);
         if(userDTO1 != null){
-                String jwt = tokenProvider.generateToken(new CustomUserDetails(userDTO));
+                String jwt = tokenProvider.generateToken(new CustomUserDetails(userDTO1));
                 return jwt;
 
     }

@@ -63,6 +63,13 @@ public class NewsController {
         if(StringUtils.isEmpty(newsDTO.getTitle())){
             listError.add("title cannot null and empty.");
         }
+        if(StringUtils.isEmpty(newsDTO.getStatus())){
+            listError.add("status cannot null and empty.");
+        }else{
+            if(!newsDTO.getStatus().equals("show") && !newsDTO.getStatus().equals("hide")){
+                listError.add("status just accept 'show' value or 'hide' value");
+            }
+        }
         if(newsDTO.getNewsCategoryDTO() == null){
             listError.add("newsCategoryDTO.newsCategoryId cannot null.");
         }else{
@@ -100,6 +107,13 @@ public class NewsController {
         if(StringUtils.isEmpty(newsDTO.getAvatar())){
             listError.add("avatar cannot null and empty.");
         }
+        if(StringUtils.isEmpty(newsDTO.getStatus())){
+            listError.add("status cannot null and empty.");
+        }else{
+            if(!newsDTO.getStatus().equals("show") && !newsDTO.getStatus().equals("hide")){
+                listError.add("status just accept 'show' value or 'hide' value");
+            }
+        }
         if(StringUtils.isEmpty(newsDTO.getContent())){
             listError.add("content cannot null and empty.");
         }
@@ -113,6 +127,7 @@ public class NewsController {
                 listError.add("newsCategoryDTO.newsCategoryId cannot null.");
             }
         }
+
         if(newsDTO.getUserDTO() == null){
             listError.add("userDTO.userId cannot null.");
         }

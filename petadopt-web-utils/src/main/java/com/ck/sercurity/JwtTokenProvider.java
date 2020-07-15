@@ -20,6 +20,7 @@ public class JwtTokenProvider {
 
         return Jwts.builder()
                 .setSubject(customUserDetails.getUser().getUserName())
+                .claim("role",customUserDetails.getUser().getRoleDTO().getRole_name())
                 .setIssuedAt(date)
                 .setExpiration(expiryDate)
                 .signWith(SignatureAlgorithm.HS512, JWT_SECRET)
