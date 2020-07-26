@@ -5,8 +5,10 @@ import com.ck.controller.commander.UserCommand;
 import com.ck.controller.utils.ParaginationUtils;
 import com.ck.controller.utils.UploadUtils;
 import com.ck.data.NewsEntity;
+import com.ck.dto.CustomUserDetails;
 import com.ck.dto.NewsCategoryDTO;
 import com.ck.dto.NewsDTO;
+import com.ck.dto.UserDTO;
 import com.ck.exceptionhandler.NotFoundObjectException;
 import com.ck.exceptionhandler.RequestValidateException;
 import com.ck.exceptionhandler.UploadFileException;
@@ -18,6 +20,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -44,8 +47,12 @@ public class NewsController {
     @RequestMapping( value = "/admin/news", method = RequestMethod.POST)
     public void saveNews(@RequestBody NewsDTO newsDTO){
         validateSave(newsDTO);
+        CustomUserDetails customUserDetails= (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserDTO userDTO = new UserDTO();
+        userDTO.setUserId(customUserDetails.getUser().getUserId());
         Timestamp createdDate = new Timestamp(System.currentTimeMillis());
         Timestamp modifiedDate = new Timestamp(System.currentTimeMillis());
+        newsDTO.setUserDTO(userDTO);
         newsDTO.setCreatedDate(createdDate);
         newsDTO.setModifiedDate(modifiedDate);
 
@@ -77,14 +84,7 @@ public class NewsController {
                 listError.add("newsCategoryDTO.newsCategoryId cannot null.");
             }
         }
-        if(newsDTO.getUserDTO() == null){
-            listError.add("userDTO.userId cannot null.");
-        }
-        else{
-            if(newsDTO.getUserDTO().getUserId() == null){
-                listError.add("userDTO.userId cannot null.");
-            }
-        }
+
         if(listError.size() > 0){
             throw  new RequestValidateException("News Validate Error!!",listError);
         }
@@ -128,14 +128,7 @@ public class NewsController {
             }
         }
 
-        if(newsDTO.getUserDTO() == null){
-            listError.add("userDTO.userId cannot null.");
-        }
-        else{
-            if(newsDTO.getUserDTO().getUserId() == null){
-                listError.add("userDTO.userId cannot null.");
-            }
-        }
+
         if(listError.size() > 0){
             throw  new RequestValidateException("News Validate Error!!",listError);
         }

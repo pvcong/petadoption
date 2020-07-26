@@ -6,6 +6,7 @@ import com.ck.data.PetAboutEntity;
 import com.ck.data.PetEntity;
 import com.ck.data.PetTypeEntity;
 import com.ck.data.UserEntity;
+import com.ck.exceptionhandler.NotFoundObjectException;
 import com.ck.utils.JpaUtils;
 import org.hibernate.HibernateException;
 import org.springframework.core.codec.Hints;
@@ -24,6 +25,9 @@ public class PetDAOImpl extends GenericDAOImpl<Integer, PetEntity> implements Pe
     public void update(PetEntity entity) {
         try{
             PetEntity petEntityPersist = entityManager.find(PetEntity.class,entity.getPetId());
+            if(petEntityPersist == null){
+                throw new NotFoundObjectException();
+            }
             entity.setUserEntity(petEntityPersist.getUserEntity());
             entity.setCreatedDate(petEntityPersist.getCreatedDate());
            // petEntityPersist.setPetTypeEntity(entity.getPetTypeEntity());
@@ -68,6 +72,9 @@ public class PetDAOImpl extends GenericDAOImpl<Integer, PetEntity> implements Pe
         try{
             for(int i = 0; i < entities.size(); i++){
                 PetEntity petEntityPersistence = entityManager.find(PetEntity.class,entities.get(i).getPetId());
+                if(petEntityPersistence == null){
+                    throw new NotFoundObjectException();
+                }
                 entityManager.remove(petEntityPersistence);
             }
         } catch (HibernateException e){

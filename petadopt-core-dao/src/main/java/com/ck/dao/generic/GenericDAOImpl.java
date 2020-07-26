@@ -50,7 +50,7 @@ public abstract class GenericDAOImpl<ID,T> implements GenericDAO<ID,T> {
     public void delete(List<T> entities) {
         try{
             for(int i = 0; i < entities.size(); i++){
-                entityManager.remove(entities.get(i));
+            entityManager.remove(entities.get(i));
             }
         } catch (HibernateException e){
             throw e;

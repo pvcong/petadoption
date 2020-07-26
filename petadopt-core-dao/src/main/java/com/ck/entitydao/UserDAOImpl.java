@@ -4,6 +4,8 @@ import com.ck.dao.generic.GenericDAO;
 import com.ck.dao.generic.GenericDAOImpl;
 import com.ck.data.RoleEntity;
 import com.ck.data.UserEntity;
+import com.ck.exceptionhandler.BadRequestException;
+import com.ck.exceptionhandler.NotFoundObjectException;
 import com.ck.utils.JpaUtils;
 import org.hibernate.HibernateException;
 import org.springframework.stereotype.Repository;
@@ -21,10 +23,13 @@ public class UserDAOImpl extends GenericDAOImpl<Integer, UserEntity> implements 
     public UserEntity findById(Integer integer) {
         UserEntity userEntity = null;
         try{
-            if(integer != null){
+
                 userEntity = entityManager.find(UserEntity.class,integer);
+                if(userEntity == null){
+                    throw new NotFoundObjectException();
+                }
                 userEntity.getRoleEntity();
-            }
+
         }catch (HibernateException e){
             throw e;
         }finally {
@@ -38,6 +43,13 @@ public class UserDAOImpl extends GenericDAOImpl<Integer, UserEntity> implements 
     public void updateRoleUser(UserEntity userEntity) {
         try{
             UserEntity userEntityPersist = entityManager.find(UserEntity.class,userEntity.getUserId());
+
+            if(userEntity == null){
+                throw new NotFoundObjectException();
+            }
+            else if(userEntityPersist.getRoleEntity().getRole_name().equals("admin")){
+                throw new BadRequestException("Cannot change admin role to user role( just accept change user role to admin role)");
+            }
             userEntityPersist.setRoleEntity(userEntity.getRoleEntity());
             entityManager.merge(userEntityPersist);
         }catch (HibernateException e){

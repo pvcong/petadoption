@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.List;
 
 
 public class RequestAdoptionPetDTO {
@@ -14,34 +15,28 @@ public class RequestAdoptionPetDTO {
 
     private String fullName;
 
-    private String currentJob;
 
     private String address;
 
     private String phoneNumber;
 
-    private String status;
+
 
     private Timestamp createdDate;
 
     private Timestamp modifiedDate;
+    private List<RequestAdoptionPetStatusDetailDTO> requestAdoptionPetStatusDetailDTOS;
 
     private PetDTO petDTO;
-
     public RequestAdoptionPetDTO() {
     }
 
-    public RequestAdoptionPetDTO(Integer requesrAdoptionPerId, String content, String fullName, String currentJob, String address, String phoneNumber, String status, Timestamp createdDate, Timestamp modifiedDate, PetDTO petDTO) {
-        this.requesrAdoptionPerId = requesrAdoptionPerId;
-        this.content = content;
-        this.fullName = fullName;
-        this.currentJob = currentJob;
-        this.address = address;
-        this.phoneNumber = phoneNumber;
-        this.status = status;
-        this.createdDate = createdDate;
-        this.modifiedDate = modifiedDate;
-        this.petDTO = petDTO;
+    public List<RequestAdoptionPetStatusDetailDTO> getRequestAdoptionPetStatusDetailDTOS() {
+        return requestAdoptionPetStatusDetailDTOS;
+    }
+
+    public void setRequestAdoptionPetStatusDetailDTOS(List<RequestAdoptionPetStatusDetailDTO> requestAdoptionPetStatusDetailDTOS) {
+        this.requestAdoptionPetStatusDetailDTOS = requestAdoptionPetStatusDetailDTOS;
     }
 
     public Integer getRequesrAdoptionPerId() {
@@ -68,13 +63,7 @@ public class RequestAdoptionPetDTO {
         this.fullName = fullName;
     }
 
-    public String getCurrentJob() {
-        return currentJob;
-    }
 
-    public void setCurrentJob(String currentJob) {
-        this.currentJob = currentJob;
-    }
 
     public String getAddress() {
         return address;
@@ -92,13 +81,7 @@ public class RequestAdoptionPetDTO {
         this.phoneNumber = phoneNumber;
     }
 
-    public String getStatus() {
-        return status;
-    }
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
 
     public Timestamp getCreatedDate() {
         return createdDate;

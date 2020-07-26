@@ -26,6 +26,31 @@ public class CustomRestHandlerException extends ResponseEntityExceptionHandler {
         apiError.setHttpStatus(HttpStatus.NOT_FOUND);
         return new ResponseEntity<Object>(apiError,new HttpHeaders(),apiError.getHttpStatus());
     }
+    @ExceptionHandler( BadRequestException.class)
+    public ResponseEntity<Object> badRequest(BadRequestException e){
+        ApiError apiError = new ApiError();
+        apiError.setMessage("Bad request");
+        List<String> errors  = new ArrayList<String>();
+        errors.add(e.getMessage());
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        apiError.setErrors(errors);
+        apiError.setTimestamp(timestamp);
+        apiError.setHttpStatus(HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<Object>(apiError,new HttpHeaders(),apiError.getHttpStatus());
+    }
+    @ExceptionHandler( StatusNotMatchException.class)
+    public ResponseEntity<Object> statusNotMatch(StatusNotMatchException e){
+        ApiError apiError = new ApiError();
+        apiError.setMessage("Status not match");
+        List<String> errors  = new ArrayList<String>();
+        errors.add(e.getMessage().toString());
+        errors.add("400");
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        apiError.setErrors(errors);
+        apiError.setTimestamp(timestamp);
+        apiError.setHttpStatus(HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<Object>(apiError,new HttpHeaders(),apiError.getHttpStatus());
+    }
     @ExceptionHandler( RequestValidateException.class)
     public ResponseEntity<Object> handlerRequestValidate(RequestValidateException e){
         ApiError apiError = new ApiError();

@@ -11,7 +11,6 @@ public class UserUtils {
             userEntity.setUserId(userDTO.getUserId());
             if(!StringUtils.isEmpty(userDTO.getUserName()))
             userEntity.setUserName(userDTO.getUserName().toLowerCase());
-            userEntity.setPassword(userDTO.getPassword());
             userEntity.setFullName(userDTO.getFullName());
             userEntity.setPhoneNumber(userDTO.getPhoneNumber());
             if(!StringUtils.isEmpty(userDTO.getEmail()))
@@ -27,10 +26,9 @@ public class UserUtils {
     }
     public static UserDTO entity2DTO(UserEntity userEntity){
         UserDTO userDTO = new UserDTO();
-        if(userDTO != null){
+        if(userEntity != null){
             userDTO.setUserId(userEntity.getUserId());
             userDTO.setUserName(userEntity.getUserName());
-            userDTO.setPassword(userEntity.getPassword());
             userDTO.setFullName(userEntity.getFullName());
             userDTO.setPhoneNumber(userEntity.getPhoneNumber());
             userDTO.setEmail(userEntity.getEmail());

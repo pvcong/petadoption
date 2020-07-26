@@ -3,6 +3,7 @@ package com.ck.data;
 import javax.persistence.*;
 import java.lang.reflect.GenericArrayType;
 import java.sql.Timestamp;
+import java.util.List;
 
 @Entity
 @Table( name = "request_adopt_pet")
@@ -15,14 +16,12 @@ public class RequestAdoptionPetEntity {
     private String content;
     @Column( name = "fullName")
     private String fullName;
-    @Column( name = "currentJob")
-    private String currentJob;
+
     @Column( name = "address")
     private String address;
     @Column( name = "phoneNumber")
     private String phoneNumber;
-    @Column( name = "status")
-    private String status;
+
     @Column( name = "createdDate")
     private Timestamp createdDate;
     @Column( name = "modifiedDate")
@@ -30,20 +29,19 @@ public class RequestAdoptionPetEntity {
     @ManyToOne( fetch = FetchType.LAZY)
     @JoinColumn( name = "pet_id")
     private PetEntity petEntity;
+    @OneToMany( mappedBy = "requestAdoptionPetEntity")
+    private List<RequestAdoptionPetStatusDetailEntity> requestAdoptionPetStatusDetailEntities;
 
     public RequestAdoptionPetEntity() {
     }
 
-    public RequestAdoptionPetEntity(String content, String fullName, String currentJob, String address, String phoneNumber, String status, Timestamp createdDate, Timestamp modifiedDate, PetEntity petEntity) {
-        this.content = content;
-        this.fullName = fullName;
-        this.currentJob = currentJob;
-        this.address = address;
-        this.phoneNumber = phoneNumber;
-        this.status = status;
-        this.createdDate = createdDate;
-        this.modifiedDate = modifiedDate;
-        this.petEntity = petEntity;
+
+    public List<RequestAdoptionPetStatusDetailEntity> getRequestAdoptionPetStatusDetailEntities() {
+        return requestAdoptionPetStatusDetailEntities;
+    }
+
+    public void setRequestAdoptionPetStatusDetailEntities(List<RequestAdoptionPetStatusDetailEntity> requestAdoptionPetStatusDetailEntities) {
+        this.requestAdoptionPetStatusDetailEntities = requestAdoptionPetStatusDetailEntities;
     }
 
     public Integer getRequesrAdoptionPerId() {
@@ -70,13 +68,7 @@ public class RequestAdoptionPetEntity {
         this.fullName = fullName;
     }
 
-    public String getCurrentJob() {
-        return currentJob;
-    }
 
-    public void setCurrentJob(String currentJob) {
-        this.currentJob = currentJob;
-    }
 
     public String getAddress() {
         return address;
@@ -94,13 +86,6 @@ public class RequestAdoptionPetEntity {
         this.phoneNumber = phoneNumber;
     }
 
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
 
     public Timestamp getCreatedDate() {
         return createdDate;

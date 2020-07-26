@@ -5,9 +5,7 @@ import com.ck.controller.utils.ParaginationUtils;
 import com.ck.controller.utils.UploadUtils;
 import com.ck.data.PetEntity;
 import com.ck.data.PetTypeEntity;
-import com.ck.dto.PetAboutDTO;
-import com.ck.dto.PetDTO;
-import com.ck.dto.PetTypeDTO;
+import com.ck.dto.*;
 import com.ck.exceptionhandler.NotFoundObjectException;
 import com.ck.exceptionhandler.RequestValidateException;
 import com.ck.exceptionhandler.UploadFileException;
@@ -21,6 +19,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -51,10 +50,16 @@ public class PetController {
         validateSavePet(petDTO);
         Timestamp createdDate = new Timestamp(System.currentTimeMillis());
         Timestamp modifiedDate = new Timestamp(System.currentTimeMillis());
+        CustomUserDetails customUserDetails= (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserDTO userDTO = new UserDTO();
+        userDTO.setUserId(customUserDetails.getUser().getUserId());
+        petDTO.setUserDTO(userDTO);
         petDTO.setCreatedDate(createdDate);
         petDTO.setModifiedDate(modifiedDate);
         petService.save(petDTO);
     }
+
+
 
     private void validateSavePet(PetDTO petDTO) {
         List<String> listValidateError = new ArrayList<>();
@@ -69,10 +74,6 @@ public class PetController {
         }
         if(StringUtils.isEmpty(petDTO.getStatus())){
             listValidateError.add("status cannot null and empty.");
-        }else{
-            if(!petDTO.getStatus().equals("show") && !petDTO.getStatus().equals("hide")){
-                listValidateError.add("status just accept 'show' value or 'hide' value");
-            }
         }
         if(petDTO.getPetTypeDTO() == null){
             listValidateError.add("petTypeDTO.petTypeId cannot null.");
@@ -82,14 +83,8 @@ public class PetController {
                 listValidateError.add("petTypeDTO.petTypeId cannot null.");
             }
         }
-        if(petDTO.getUserDTO() == null){
-            listValidateError.add("userDTO.userId cannot null.");
-        }
-        else{
-            if(petDTO.getUserDTO().getUserId() == null){
-                listValidateError.add("userDTO.userId cannot null.");
-            }
-        }
+
+
         if(petDTO.getPetAboutDTO() == null){
             listValidateError.add("petAboutDTO cannot null.");
         }
@@ -122,10 +117,6 @@ public class PetController {
         }
         if(StringUtils.isEmpty(petDTO.getStatus())){
             listValidateError.add("status cannot null and empty.");
-        }else{
-            if(!petDTO.getStatus().equals("show") && !petDTO.getStatus().equals("hide")){
-                listValidateError.add("status just accept 'show' value or 'hide' value");
-            }
         }
         if(StringUtils.isEmpty(petDTO.getPetId())){
             listValidateError.add("petId cannot null.");
@@ -138,14 +129,7 @@ public class PetController {
                 listValidateError.add("petTypeDTO.petTypeId cannot null.");
             }
         }
-        if(petDTO.getUserDTO() == null){
-            listValidateError.add("userDTO.userId cannot null.");
-        }
-        else{
-            if(petDTO.getUserDTO().getUserId() == null){
-                listValidateError.add("userDTO.userId cannot null.");
-            }
-            }
+
         if(petDTO.getPetAboutDTO() == null){
             listValidateError.add("petAboutDTO.petId cannot null.");
         }

@@ -4,8 +4,10 @@ import com.ck.dao.generic.GenericDAO;
 import com.ck.dao.generic.GenericDAOImpl;
 import com.ck.data.NewsCategoryEntity;
 import com.ck.data.NewsEntity;
+import com.ck.exceptionhandler.NotFoundObjectException;
 import com.ck.utils.JpaUtils;
 import org.hibernate.HibernateException;
+import org.hibernate.ObjectNotFoundException;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -20,6 +22,9 @@ public class NewsDAOImpl extends GenericDAOImpl<Integer, NewsEntity> implements 
     public void update(NewsEntity entity) {
         try{
             NewsEntity newsEntityPersis = entityManager.find(NewsEntity.class,entity.getNewsId());
+            if(newsEntityPersis == null){
+                throw new NotFoundObjectException();
+            }
             entity.setUserEntity(newsEntityPersis.getUserEntity());
             entity.setCreatedDate(newsEntityPersis.getCreatedDate());
             entityManager.merge(entity);
@@ -35,6 +40,9 @@ public class NewsDAOImpl extends GenericDAOImpl<Integer, NewsEntity> implements 
         try{
             for(NewsEntity newsEntity : entities){
                 NewsEntity newsEntityPersis = entityManager.find(NewsEntity.class,newsEntity.getNewsId());
+                if(newsEntityPersis == null){
+                    throw new NotFoundObjectException();
+                }
                 entityManager.remove(newsEntityPersis);
             }
         } catch (HibernateException e){
@@ -50,8 +58,14 @@ public class NewsDAOImpl extends GenericDAOImpl<Integer, NewsEntity> implements 
         NewsEntity entity = null;
         try{
             entity =  entityManager.find(persistenClass,integer);
-            entity.getNewsCategoryEntity();
-            entity.getUserEntity();
+            if(entity == null){
+                throw new NotFoundObjectException();
+            }
+            if(entity != null){
+                entity.getNewsCategoryEntity();
+                entity.getUserEntity();
+            }
+
         } catch (HibernateException e){
             throw e;
         }
