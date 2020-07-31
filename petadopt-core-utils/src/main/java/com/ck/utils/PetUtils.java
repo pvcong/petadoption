@@ -20,7 +20,7 @@ public class PetUtils {
             petEntity.setImage(petDTO.getImage());
             petEntity.setStatus(petDTO.getStatus());
             petEntity.setWeight(petDTO.getWeight());
-
+            petEntity.setEntryDate(petDTO.getEntryDate());
         }
         return petEntity;
     }
@@ -40,6 +40,7 @@ public class PetUtils {
             petDTO.setImage(petEntity.getImage());
             petDTO.setStatus(petEntity.getStatus());
             petDTO.setWeight(petEntity.getWeight());
+            petDTO.setEntryDate(petEntity.getEntryDate());
 
 
         }

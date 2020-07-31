@@ -36,31 +36,57 @@ public class PetDTO {
     private PetTypeDTO petTypeDTO;
 
     private PetAboutDTO petAboutDTO;
-
+    private RescueOrderDTO rescueOrderDTO;
     private List<RequestAdoptionPetDTO> requestAdoptionPetDTOS;
-
+    private FosterPetDTO fosterPetDTO;
+    private PetEntryStatusDTO petEntryStatusDTO;
+    private PetEntryTypeDTO petEntryTypeDTO;
+    private Timestamp entryDate;
+    private List<PetStatusDTO> petStatusDTOS;
     public PetDTO() {
     }
 
-    public PetDTO(Integer petId, String petName, String image, String description, Integer weight, Integer age, String address, String color, String breed, String gender, String status, Timestamp createdDate, Timestamp modifiedDate, UserDTO userDTO, PetTypeDTO petTypeDTO, PetAboutDTO petAboutDTO, List<RequestAdoptionPetDTO> requestAdoptionPetDTOS) {
-        this.petId = petId;
-        this.petName = petName;
-        this.image = image;
-        this.description = description;
-        this.weight = weight;
-        this.age = age;
-        this.address = address;
-        this.color = color;
-        this.breed = breed;
-        this.gender = gender;
-        this.status = status;
-        this.createdDate = createdDate;
-        this.modifiedDate = modifiedDate;
-        this.userDTO = userDTO;
-        this.petTypeDTO = petTypeDTO;
-        this.petAboutDTO = petAboutDTO;
-        this.requestAdoptionPetDTOS = requestAdoptionPetDTOS;
+
+    public List<PetStatusDTO> getPetStatusDTOS() {
+        return petStatusDTOS;
     }
+
+    public void setPetStatusDTOS(List<PetStatusDTO> petStatusDTOS) {
+        this.petStatusDTOS = petStatusDTOS;
+    }
+
+    public PetEntryStatusDTO getPetEntryStatusDTO() {
+        return petEntryStatusDTO;
+    }
+
+    public void setPetEntryStatusDTO(PetEntryStatusDTO petEntryStatusDTO) {
+        this.petEntryStatusDTO = petEntryStatusDTO;
+    }
+
+    public PetEntryTypeDTO getPetEntryTypeDTO() {
+        return petEntryTypeDTO;
+    }
+
+    public void setPetEntryTypeDTO(PetEntryTypeDTO petEntryTypeDTO) {
+        this.petEntryTypeDTO = petEntryTypeDTO;
+    }
+
+    public Timestamp getEntryDate() {
+        return entryDate;
+    }
+
+    public void setEntryDate(Timestamp entryDate) {
+        this.entryDate = entryDate;
+    }
+
+    public FosterPetDTO getFosterPetDTO() {
+        return fosterPetDTO;
+    }
+
+    public void setFosterPetDTO(FosterPetDTO fosterPetDTO) {
+        this.fosterPetDTO = fosterPetDTO;
+    }
+
 
     public String getGender() {
         return gender;
@@ -76,6 +102,14 @@ public class PetDTO {
 
     public void setRequestAdoptionPetDTOS(List<RequestAdoptionPetDTO> requestAdoptionPetDTOS) {
         this.requestAdoptionPetDTOS = requestAdoptionPetDTOS;
+    }
+
+    public RescueOrderDTO getRescueOrderDTO() {
+        return rescueOrderDTO;
+    }
+
+    public void setRescueOrderDTO(RescueOrderDTO rescueOrderDTO) {
+        this.rescueOrderDTO = rescueOrderDTO;
     }
 
     public Integer getPetId() {

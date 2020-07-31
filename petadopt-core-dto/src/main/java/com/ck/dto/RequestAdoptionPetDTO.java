@@ -26,9 +26,18 @@ public class RequestAdoptionPetDTO {
 
     private Timestamp modifiedDate;
     private List<RequestAdoptionPetStatusDetailDTO> requestAdoptionPetStatusDetailDTOS;
+    private List<RequestAdoptionPetAppointmentDTO> requestAdoptionPetAppointmentDTOS;
 
     private PetDTO petDTO;
     public RequestAdoptionPetDTO() {
+    }
+
+    public List<RequestAdoptionPetAppointmentDTO> getRequestAdoptionPetAppointmentDTOS() {
+        return requestAdoptionPetAppointmentDTOS;
+    }
+
+    public void setRequestAdoptionPetAppointmentDTOS(List<RequestAdoptionPetAppointmentDTO> requestAdoptionPetAppointmentDTOS) {
+        this.requestAdoptionPetAppointmentDTOS = requestAdoptionPetAppointmentDTOS;
     }
 
     public List<RequestAdoptionPetStatusDetailDTO> getRequestAdoptionPetStatusDetailDTOS() {

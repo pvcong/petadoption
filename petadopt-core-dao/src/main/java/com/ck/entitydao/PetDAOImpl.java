@@ -2,14 +2,12 @@ package com.ck.entitydao;
 
 import com.ck.constant.DAOConstant;
 import com.ck.dao.generic.GenericDAOImpl;
-import com.ck.data.PetAboutEntity;
-import com.ck.data.PetEntity;
-import com.ck.data.PetTypeEntity;
-import com.ck.data.UserEntity;
+import com.ck.data.*;
 import com.ck.exceptionhandler.NotFoundObjectException;
 import com.ck.utils.JpaUtils;
 import org.hibernate.HibernateException;
 import org.springframework.core.codec.Hints;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -25,6 +23,7 @@ public class PetDAOImpl extends GenericDAOImpl<Integer, PetEntity> implements Pe
     public void update(PetEntity entity) {
         try{
             PetEntity petEntityPersist = entityManager.find(PetEntity.class,entity.getPetId());
+
             if(petEntityPersist == null){
                 throw new NotFoundObjectException();
             }
@@ -54,10 +53,23 @@ public class PetDAOImpl extends GenericDAOImpl<Integer, PetEntity> implements Pe
     public void save(PetEntity entity) {
         try{
             PetAboutEntity petAboutEntity = entity.getPetAboutEntity();
+
+
             entity.setPetAboutEntity(null);
-            entityManager.persist(entity);
+            entityManager.persist(entity);;
             petAboutEntity.setPetEntity(entity);
             entityManager.persist(petAboutEntity);
+            PetStatusTypeEntity petStatusTypeEntity = new PetStatusTypeEntity();
+            petStatusTypeEntity.setPetStatusTypeId(1);
+            PetStatusEntity petStatusEntity = new PetStatusEntity();
+            petStatusEntity.setPetEntity(entity);
+            petStatusEntity.setDate(entity.getEntryDate());
+            petStatusEntity.setContent("Hệ thống tự động tạo");
+            petStatusEntity.setPetStatusTypeEntity(petStatusTypeEntity);
+
+            petAboutEntity.setPetEntity(entity);
+
+            entityManager.persist(petStatusEntity);
         } catch (HibernateException e){
             throw e;
         }
@@ -115,7 +127,16 @@ public class PetDAOImpl extends GenericDAOImpl<Integer, PetEntity> implements Pe
                     "SELECT DISTINCT p FROM PetEntity p " +
                     "JOIN FETCH p.petTypeEntity pt " +
                     "JOIN FETCH p.userEntity u " +
-                    "JOIN FETCH p.petAboutEntity pa WHERE p.petId = :petId ");
+                    "LEFT JOIN FETCH p.fosterPetEntity fp " +
+                    "JOIN FETCH p.petEntryTypeEntity pet " +
+                    "JOIN FETCH p.petEntryStatusEntity pet " +
+                    "LEFT JOIN FETCH p.petStatusEntities ps " +
+                    "JOIN FETCH p.petAboutEntity pa " +
+                    " LEFT JOIN FETCH ps.petStatusTypeEntity pst " +
+                    "WHERE 1=1 AND " +
+                    " (ps.petStatusId IN (SELECT MAX(pss.petStatusId) FROM PetStatusEntity pss " +
+                    " INNER JOIN pss.petEntity pp " +
+                    "GROUP BY pss.petEntity ) OR ps.petStatusId IS NULL) AND p.petId = :petId");
             Query query = entityManager.createQuery(stringQuery.toString());
             query.setParameter("petId",id);
             try{
@@ -133,18 +154,32 @@ public class PetDAOImpl extends GenericDAOImpl<Integer, PetEntity> implements Pe
     }
 
     @Override
-    public Object[] findPetAdmin(PetEntity petEntity, PetTypeEntity petTypeEntity, String sortProperty, String sortValue, Integer limit, Integer offset) {
+    public Object[] findPetAdmin(PetEntity petEntity, PetTypeEntity petTypeEntity,PetStatusTypeEntity petStatusTypeEntity, String sortProperty, String sortValue, Integer limit, Integer offset) {
         List<PetEntity> petEntities = null;
         Integer count = 0;
 
         StringBuilder stringQuery = new StringBuilder("SELECT DISTINCT p FROM PetEntity p" +
                 " JOIN FETCH p.petTypeEntity pt" +
-                " JOIN FETCH p.userEntity u WHERE 1=1 ");
+                " JOIN FETCH p.userEntity u ");
+        stringQuery.append("   LEFT JOIN FETCH p.petStatusEntities ps  " +
+                "   LEFT JOIN FETCH ps.petStatusTypeEntity pst" +
+                "  WHERE (ps.petStatusId IN (SELECT MAX(pss.petStatusId) FROM PetStatusEntity pss " +
+                "     INNER JOIN pss.petEntity pp " +
+                " INNER JOIN pss.petStatusTypeEntity psts ");
+//                "    GROUP BY pss.petEntity  ) " +
+//                "OR ps.petStatusId IS NULL  ");
+        stringQuery.append(" GROUP BY pss.petEntity)  OR ps.petStatusId IS NULL)  ");
+        if(petStatusTypeEntity != null){
+            if(petStatusTypeEntity.getPetStatusTypeId() != null){
+                stringQuery.append("AND pst.petStatusTypeId = :petStatusTypeId ");
+            }
+        }
         if(petTypeEntity != null){
             if(petTypeEntity.getPetTypeId() != null){
                 stringQuery.append(" AND pt.petTypeId = :petTypeId");
             }
         }
+
         if(petEntity != null){
 
             if(petEntity.getPetId() != null){
@@ -173,6 +208,11 @@ public class PetDAOImpl extends GenericDAOImpl<Integer, PetEntity> implements Pe
                 query.setParameter("petTypeId",petTypeEntity.getPetTypeId());
             }
         }
+        if(petStatusTypeEntity != null){
+            if(petStatusTypeEntity.getPetStatusTypeId() != null){
+                query.setParameter("petStatusTypeId",petStatusTypeEntity.getPetStatusTypeId());
+            }
+        }
         if(petEntity != null){
             if(petEntity.getPetId() != null){
                 query.setParameter("petId",petEntity.getPetId());
@@ -190,12 +230,26 @@ public class PetDAOImpl extends GenericDAOImpl<Integer, PetEntity> implements Pe
 
         StringBuilder stringQueryCount = new StringBuilder("SELECT COUNT(DISTINCT p) FROM PetEntity p" +
                 " INNER JOIN p.petTypeEntity pt" +
-                " INNER JOIN p.userEntity u WHERE 1=1 ");
+                " INNER JOIN p.userEntity u  " );
+        stringQueryCount.append("   LEFT JOIN  p.petStatusEntities ps  " +
+                "   LEFT JOIN  ps.petStatusTypeEntity pst" +
+                "  WHERE (ps.petStatusId IN (SELECT MAX(pss.petStatusId) FROM PetStatusEntity pss " +
+                "     INNER JOIN pss.petEntity pp " +
+                " INNER JOIN pss.petStatusTypeEntity psts ");
+//                "    GROUP BY pss.petEntity  ) " +
+//                "OR ps.petStatusId IS NULL  ");
+        stringQueryCount.append(" GROUP BY pss.petEntity)  OR ps.petStatusId IS NULL) ");
+        if(petStatusTypeEntity != null){
+            if(petStatusTypeEntity.getPetStatusTypeId() != null) {
+                stringQueryCount.append("AND pst.petStatusTypeId = :petStatusTypeId ");
+            }
+        }
         if(petTypeEntity != null){
             if(petTypeEntity.getPetTypeId() != null){
                 stringQueryCount.append(" AND pt.petTypeId = :petTypeId");
             }
         }
+
         if(petEntity != null){
             if(petEntity.getPetId() != null){
                 stringQueryCount.append(" AND p.petId = :petId");
@@ -217,6 +271,11 @@ public class PetDAOImpl extends GenericDAOImpl<Integer, PetEntity> implements Pe
         if(petTypeEntity != null){
             if(petTypeEntity.getPetTypeId() != null){
                 queryCount.setParameter("petTypeId",petTypeEntity.getPetTypeId());
+            }
+        }
+        if(petStatusTypeEntity != null){
+            if(petStatusTypeEntity.getPetStatusTypeId() != null){
+                queryCount.setParameter("petStatusTypeId",petStatusTypeEntity.getPetStatusTypeId());
             }
         }
         if(petEntity != null){
@@ -253,7 +312,12 @@ public class PetDAOImpl extends GenericDAOImpl<Integer, PetEntity> implements Pe
         List<PetEntity> petEntities = new ArrayList<>();
         Integer count = 0;
         StringBuilder stringQuery = new StringBuilder("SELECT DISTINCT p " +
-                "FROM PetEntity p JOIN FETCH p.petAboutEntity pa INNER JOIN p.petTypeEntity pt WHERE 1=1");
+                "FROM PetEntity p JOIN FETCH p.petAboutEntity pa INNER JOIN p.petTypeEntity pt   " +
+                " LEFT JOIN p.petStatusEntities ps  " +
+                " INNER JOIN ps.petStatusTypeEntity pst " +
+                        "WHERE (ps.petStatusId IN (SELECT MAX(pss.petStatusId) FROM PetStatusEntity pss " +
+                        "   INNER JOIN pss.petEntity pp " +
+                        "  GROUP BY pss.petEntity  ) OR ps.petStatusId IS NULL) AND pst.petStatusTypeId = :petStatusTypeId");
         if(petTypeEntity != null){
             if(petTypeEntity.getPetTypeId() != null){
                 stringQuery.append(" AND pt.petTypeId = :petTypeId ");
@@ -293,6 +357,7 @@ public class PetDAOImpl extends GenericDAOImpl<Integer, PetEntity> implements Pe
 
         stringQuery.append(" ORDER BY  p.modifiedDate DESC ");
         Query query = entityManager.createQuery(stringQuery.toString());
+        query.setParameter("petStatusTypeId",2);
         JpaUtils.buildLimit2Offset(query, limit, offset);
         if(petTypeEntity != null){
             if(petTypeEntity.getPetTypeId() != null){
@@ -338,7 +403,12 @@ public class PetDAOImpl extends GenericDAOImpl<Integer, PetEntity> implements Pe
 
 
         StringBuilder stringQueryCount = new StringBuilder("SELECT COUNT(DISTINCT p) " +
-                "FROM PetEntity p INNER JOIN  p.petAboutEntity pa INNER JOIN p.petTypeEntity pt WHERE 1=1");
+                "FROM PetEntity p INNER JOIN  p.petAboutEntity pa INNER JOIN p.petTypeEntity pt" +
+                " LEFT JOIN p.petStatusEntities ps  " +
+                        " INNER JOIN ps.petStatusTypeEntity pst " +
+                        "WHERE (ps.petStatusId IN (SELECT MAX(pss.petStatusId) FROM PetStatusEntity pss " +
+                        "   INNER JOIN pss.petEntity pp " +
+                        "  GROUP BY pss.petEntity  ) OR ps.petStatusId IS NULL) AND pst.petStatusTypeId = :petStatusTypeId");
         if(petTypeEntity != null){
             if(petTypeEntity.getPetTypeId() != null){
                 stringQueryCount.append(" AND pt.petTypeId = :petTypeId ");
@@ -380,6 +450,7 @@ public class PetDAOImpl extends GenericDAOImpl<Integer, PetEntity> implements Pe
 
 
         Query queryCount = entityManager.createQuery(stringQueryCount.toString());
+        queryCount.setParameter("petStatusTypeId",2);
         if(petTypeEntity != null){
             if(petTypeEntity.getPetTypeId() != null){
                 queryCount.setParameter("petTypeId",petTypeEntity.getPetTypeId());
@@ -433,5 +504,31 @@ public class PetDAOImpl extends GenericDAOImpl<Integer, PetEntity> implements Pe
 
 
         return new Object[]{count,petEntities};
+    }
+
+    @Override
+    public List<PetStatusEntity> findPetSStatusByPetId(Integer petId) {
+        List<PetStatusEntity>  petStatusEntities = new ArrayList<>();
+        StringBuilder stringQuery = new StringBuilder("SELECT ps FROM PetStatusEntity ps " +
+                "INNER JOIN ps.petEntity p " +
+                "JOIN FETCH ps.petStatusTypeEntity " +
+                "WHERE p.petId = :petId");
+
+        JpaUtils.buildOrderBy(stringQuery,"date","DESC");
+
+        Query query = entityManager.createQuery(stringQuery.toString());
+        query.setParameter("petId",petId);
+
+
+
+        try {
+            petStatusEntities = query.getResultList();
+
+        }catch (HibernateException e){
+            throw e;
+        }finally {
+            entityManager.close();
+        }
+        return petStatusEntities;
     }
 }

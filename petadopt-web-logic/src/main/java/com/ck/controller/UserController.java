@@ -90,7 +90,7 @@ public class UserController {
     }
 
     @ResponseStatus( code = HttpStatus.CREATED)
-    @RequestMapping( value = "admin//user", method = RequestMethod.PUT)
+    @RequestMapping( value = "admin/user", method = RequestMethod.PUT)
     public void updateUser(@RequestBody UserDTO userDTO){
 
         Timestamp modifiedDate = new Timestamp(System.currentTimeMillis());

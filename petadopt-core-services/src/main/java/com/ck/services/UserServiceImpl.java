@@ -22,6 +22,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void save(UserDTO userDTO) {
         UserEntity userEntity = UserUtils.dto2Entity(userDTO);
+        userEntity.setPassword(userDTO.getPassword());
         RoleDTO roleDTO = userDTO.getRoleDTO();
         RoleEntity roleEntity = RoleUtils.dto2Entity(roleDTO);
         userEntity.setRoleEntity(roleEntity);

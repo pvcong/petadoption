@@ -45,8 +45,72 @@ public class PetEntity {
     private PetAboutEntity petAboutEntity;
     @OneToMany( mappedBy = "petEntity")
     private List<RequestAdoptionPetEntity> requestAdoptionPetEntities;
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "rescue_order_id")
+    private RescueOrderEntity rescueOrderEntity;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "foster_pet_id")
+    private FosterPetEntity fosterPetEntity;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pet_entry_status_id")
+    private PetEntryStatusEntity petEntryStatusEntity;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pet_entry_type_id")
+    private PetEntryTypeEntity petEntryTypeEntity;
+    @Column(name = "entry_date")
+    private Timestamp entryDate;
+    @OneToMany(mappedBy = "petEntity")
+    private List<PetStatusEntity> petStatusEntities;
     public PetEntity() {
+    }
+
+    public List<PetStatusEntity> getPetStatusEntities() {
+        return petStatusEntities;
+    }
+
+    public void setPetStatusEntities(List<PetStatusEntity> petStatusEntities) {
+        this.petStatusEntities = petStatusEntities;
+    }
+
+    public FosterPetEntity getFosterPetEntity() {
+        return fosterPetEntity;
+    }
+
+
+    public PetEntryStatusEntity getPetEntryStatusEntity() {
+        return petEntryStatusEntity;
+    }
+
+    public void setPetEntryStatusEntity(PetEntryStatusEntity petEntryStatusEntity) {
+        this.petEntryStatusEntity = petEntryStatusEntity;
+    }
+
+    public PetEntryTypeEntity getPetEntryTypeEntity() {
+        return petEntryTypeEntity;
+    }
+
+    public void setPetEntryTypeEntity(PetEntryTypeEntity petEntryTypeEntity) {
+        this.petEntryTypeEntity = petEntryTypeEntity;
+    }
+
+    public Timestamp getEntryDate() {
+        return entryDate;
+    }
+
+    public void setEntryDate(Timestamp entryDate) {
+        this.entryDate = entryDate;
+    }
+
+    public void setFosterPetEntity(FosterPetEntity fosterPetEntity) {
+        this.fosterPetEntity = fosterPetEntity;
+    }
+
+    public RescueOrderEntity getRescueOrderEntity() {
+        return rescueOrderEntity;
+    }
+
+    public void setRescueOrderEntity(RescueOrderEntity rescueOrderEntity) {
+        this.rescueOrderEntity = rescueOrderEntity;
     }
 
     public PetEntity(Integer petId, String petName, String image, String description, Integer weight, Integer age, String address, String color, String breed, String status, String gender, Timestamp createdDate, Timestamp modifiedDate, UserEntity userEntity, PetTypeEntity petTypeEntity, PetAboutEntity petAboutEntity, List<RequestAdoptionPetEntity> requestAdoptionPetEntities) {

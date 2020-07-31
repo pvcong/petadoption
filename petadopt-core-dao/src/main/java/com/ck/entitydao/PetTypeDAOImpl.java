@@ -8,4 +8,5 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @Repository
 public class PetTypeDAOImpl extends GenericDAOImpl<Integer, PetTypeEntity> implements PetTypeDAO {
+
 }

@@ -20,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.parameters.P;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -72,9 +73,7 @@ public class PetController {
         if(StringUtils.isEmpty(petDTO.getPetName())){
             listValidateError.add("petName cannot null and empty.");
         }
-        if(StringUtils.isEmpty(petDTO.getStatus())){
-            listValidateError.add("status cannot null and empty.");
-        }
+
         if(petDTO.getPetTypeDTO() == null){
             listValidateError.add("petTypeDTO.petTypeId cannot null.");
         }
@@ -115,9 +114,7 @@ public class PetController {
         if(StringUtils.isEmpty(petDTO.getPetName())){
             listValidateError.add("petName cannot null and empty.");
         }
-        if(StringUtils.isEmpty(petDTO.getStatus())){
-            listValidateError.add("status cannot null and empty.");
-        }
+
         if(StringUtils.isEmpty(petDTO.getPetId())){
             listValidateError.add("petId cannot null.");
         }
@@ -187,17 +184,24 @@ public class PetController {
         PetDTO petDTO =  petService.findSinglePetAdmin(id);
             return petDTO;
     }
+    @ResponseStatus( value = HttpStatus.OK)
+    @RequestMapping( value = "admin/pet/{id}/petstatus", method = RequestMethod.GET)
+    public List<PetStatusDTO> findPetStatusByPetId(@PathVariable Integer id){
+        return petService.findByPetStatusById(id);
 
+    }
     @ResponseStatus( value = HttpStatus.OK)
     @RequestMapping( value = "admin/pet", method = RequestMethod.GET)
     public Map<String,Object> findPetAdmin(@ModelAttribute PetCommand cmd){
         ParaginationUtils.caculationFirstItem(cmd);
+        PetStatusTypeDTO petStatusTypeDTO = new PetStatusTypeDTO();
+        petStatusTypeDTO.setPetStatusTypeId(cmd.getStatus());
         PetTypeDTO petTypeDTO = null;
         PetDTO petDTO = cmd.getPojo();
         if(petDTO != null){
             petTypeDTO = petDTO.getPetTypeDTO();
         }
-        Object[] objects =  petService.findPetAdmin(petDTO,petTypeDTO,cmd.getSortProperty(),cmd.getSortValue(),cmd.getMaxItem(),cmd.getFirtItem());
+        Object[] objects =  petService.findPetAdmin(petDTO,petTypeDTO,petStatusTypeDTO,cmd.getSortProperty(),cmd.getSortValue(),cmd.getMaxItem(),cmd.getFirtItem());
 
         Integer totalItem = (Integer) objects[0];
         cmd.setTotalItem(totalItem);

@@ -1,7 +1,11 @@
 package com.ck.utils;
 
+import com.ck.data.PetStatusTypeEntity;
 import com.ck.data.PetTypeEntity;
 import com.ck.dto.PetTypeDTO;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class PetTypeUtils {
     public static PetTypeEntity dto2Entity(PetTypeDTO petTypeDTO){
@@ -24,4 +28,5 @@ public class PetTypeUtils {
         }
         return petTypeDTO;
     }
+
 }

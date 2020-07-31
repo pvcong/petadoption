@@ -31,10 +31,18 @@ public class RequestAdoptionPetEntity {
     private PetEntity petEntity;
     @OneToMany( mappedBy = "requestAdoptionPetEntity")
     private List<RequestAdoptionPetStatusDetailEntity> requestAdoptionPetStatusDetailEntities;
-
+    @OneToMany(mappedBy = "requestAdoptionPetEntity")
+    private List<RequestAdoptionPetAppointmentEntity> requestAdoptionPetAppointmentEntities;
     public RequestAdoptionPetEntity() {
     }
 
+    public List<RequestAdoptionPetAppointmentEntity> getRequestAdoptionPetAppointmentEntities() {
+        return requestAdoptionPetAppointmentEntities;
+    }
+
+    public void setRequestAdoptionPetAppointmentEntities(List<RequestAdoptionPetAppointmentEntity> requestAdoptionPetAppointmentEntities) {
+        this.requestAdoptionPetAppointmentEntities = requestAdoptionPetAppointmentEntities;
+    }
 
     public List<RequestAdoptionPetStatusDetailEntity> getRequestAdoptionPetStatusDetailEntities() {
         return requestAdoptionPetStatusDetailEntities;
